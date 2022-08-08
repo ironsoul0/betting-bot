@@ -1,1 +1,1 @@
-export * from "./bet";
+export * from "./match";

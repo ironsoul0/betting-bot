@@ -8,7 +8,6 @@ export interface IMatch {
   team2: string;
   over: boolean;
   winner?: string;
-  betCreated: boolean;
 }
 
 const matchSchema = new Schema<IMatch>({
@@ -19,7 +18,6 @@ const matchSchema = new Schema<IMatch>({
   team2: { type: String, required: true },
   over: { type: Boolean, required: true },
   winner: { type: String, required: false },
-  betCreated: { type: Boolean, required: true, default: false },
 });
 
 export const Match = model<IMatch>("Match", matchSchema);
