@@ -11,7 +11,6 @@ const getPrivateKey = (s: string) => {
 
 export const config = {
   MONGO_URI: process.env.MONGO_URI as string,
-  REDIS_URI: process.env.REDIS_URI as string,
   PROGRAM_ID: process.env.PROGRAM_ID as string,
   CONNECTION_URL: process.env.CONNECTION_URL as string,
   API_PORT: process.env.API_PORT || 3000,
