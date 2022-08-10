@@ -21,6 +21,7 @@ const getProgram = () => {
 };
 
 export const solana = {
+  resolverKeyPair: keypair,
   resolverKey: keypair.publicKey,
   program: getProgram(),
   connection,

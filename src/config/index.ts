@@ -14,6 +14,7 @@ export const config = {
   REDIS_URI: process.env.REDIS_URI as string,
   PROGRAM_ID: process.env.PROGRAM_ID as string,
   CONNECTION_URL: process.env.CONNECTION_URL as string,
+  API_PORT: process.env.API_PORT || 3000,
   BOT_PRIVATE_KEY: getPrivateKey(process.env.BOT_PRIVATE_KEY as string),
   BET_EVENT_ID_SIZE: 8,
   IDL,

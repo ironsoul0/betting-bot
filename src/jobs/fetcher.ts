@@ -1,10 +1,11 @@
 import * as anchor from "@project-serum/anchor";
 import * as web3 from "@solana/web3.js";
-import { HLTV } from "hltv";
+import { HLTV, MatchFilter } from "hltv";
 
 import { IMatch, Match } from "../models";
 import { solana } from "../solana";
 
+const TOP_MATCHES = 20;
 const JOB_NAME = "MATCH_FETCHER";
 const SCHEDULE = "1 hour";
 
@@ -42,10 +43,15 @@ const createBet = async (
 };
 
 const jobHandler = async () => {
-  const matches = await HLTV.getMatches();
+  const matches = await HLTV.getMatches({ filter: MatchFilter.TopTier });
   const validMatches = matches
     .filter((match) => match.team1?.name && match.team2?.name)
-    .filter((match) => match.title || match.event?.name);
+    .filter(
+      (match) => match.team1?.name !== "TBD" && match.team2?.name !== "TBD"
+    )
+    .filter((match) => match.title || match.event?.name)
+    .filter((match) => match.date)
+    .slice(0, TOP_MATCHES);
 
   validMatches.forEach(async (match) => {
     const matchExists = await Match.findOne({ matchID: match.id });
@@ -62,11 +68,15 @@ const jobHandler = async () => {
       } as IMatch);
       await newMatch.save();
 
-      const matchInfo = await HLTV.getMatch({ id: match.id });
-      const odds = matchInfo.odds;
-      if (odds.length > 0) {
-        createBet(match.id, 0, odds[0].team1);
-        createBet(match.id, 1, odds[0].team2);
+      try {
+        const matchInfo = await HLTV.getMatch({ id: match.id });
+        const odds = matchInfo.odds;
+        if (odds.length > 0) {
+          createBet(match.id, 0, odds[0].team1);
+          createBet(match.id, 1, odds[0].team2);
+        }
+      } catch (err) {
+        console.log(`Hit HLTV rate limit: ${err}`);
       }
     }
   });
