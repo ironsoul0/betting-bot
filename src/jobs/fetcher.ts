@@ -5,7 +5,9 @@ import { HLTV, MatchFilter } from "hltv";
 import { IMatch, Match } from "../models";
 import { solana } from "../solana";
 
+const LAMPORTS_PER_SOL = 1e9;
 const TOP_MATCHES = 20;
+
 const JOB_NAME = "MATCH_FETCHER";
 const SCHEDULE = "1 hour";
 
@@ -20,7 +22,7 @@ const createBet = async (
     `Trying to create bet for match id=${matchID} makerSide=${makerSide} betSize=${betSize}`
   );
 
-  const betSizeLamports = new anchor.BN(betSize * 1e9);
+  const betSizeLamports = new anchor.BN((betSize * LAMPORTS_PER_SOL) / 10);
   const betAccount = anchor.web3.Keypair.generate();
 
   await solana.program.methods
