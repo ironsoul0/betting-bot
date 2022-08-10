@@ -39,17 +39,21 @@ const resolveBet = async (
     `Trying to resolve bet for match id=${account.eventId} makerSide=${account.makerSide}`
   );
 
-  await solana.program.methods
-    .resolveBet(result)
-    .accounts({
-      betAccount: betKey,
-      betResolver: account.betResolver,
-      makerAccount: account.maker,
-      takerAccount: account.taker,
-      systemProgram: web3.SystemProgram.programId,
-    })
-    .signers([solana.resolverKeyPair])
-    .rpc();
+  try {
+    await solana.program.methods
+      .resolveBet(result)
+      .accounts({
+        betAccount: betKey,
+        betResolver: account.betResolver,
+        makerAccount: account.maker,
+        takerAccount: account.taker,
+        systemProgram: web3.SystemProgram.programId,
+      })
+      .signers([solana.resolverKeyPair])
+      .rpc();
+  } catch (err) {
+    console.log(`Error while resolving bet with id=${account.eventId}: ${err}`);
+  }
 
   solana.connection.onAccountChange(betKey, async () => {
     console.log(

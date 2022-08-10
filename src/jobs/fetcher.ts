@@ -25,16 +25,20 @@ const createBet = async (
   const betSizeLamports = new anchor.BN((betSize * LAMPORTS_PER_SOL) / 10);
   const betAccount = anchor.web3.Keypair.generate();
 
-  await solana.program.methods
-    .createBet(String(matchID), makerSide, betSizeLamports)
-    .accounts({
-      initializer: solana.resolverKey,
-      betAccount: betAccount.publicKey,
-      betResolver: solana.resolverKey,
-      systemProgram: web3.SystemProgram.programId,
-    })
-    .signers([betAccount])
-    .rpc();
+  try {
+    await solana.program.methods
+      .createBet(String(matchID), makerSide, betSizeLamports)
+      .accounts({
+        initializer: solana.resolverKey,
+        betAccount: betAccount.publicKey,
+        betResolver: solana.resolverKey,
+        systemProgram: web3.SystemProgram.programId,
+      })
+      .signers([betAccount])
+      .rpc();
+  } catch (err) {
+    console.log(`Error while creating bet with id=${matchID}: ${err}`);
+  }
 
   solana.connection.onAccountChange(betAccount.publicKey, async () => {
     const bets = await solana.program.account.bet.all();
