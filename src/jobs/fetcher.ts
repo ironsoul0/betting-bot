@@ -49,7 +49,7 @@ const createBet = async (
 };
 
 const jobHandler = async () => {
-  const matches = await HLTV.getMatches({ filter: MatchFilter.TopTier });
+  const matches = await HLTV.getMatches();
   const validMatches = matches
     .filter((match) => match.team1?.name && match.team2?.name)
     .filter(
